@@ -1,48 +1,86 @@
+
 <template>
-    <section class="mt-5 flex flex-col">
-        <button v-for="{ name, id } in options" 
-        :key="id" 
-        @click="$emit('selectedOption', id)"
-        :class="['capitalize disabled:shadow-none disabled:bg-gray-100',{
-            correct:id === correctAnswer && blockSelection,
-            incorrect :id != correctAnswer && blockSelection 
-        }]"
-        :disabled="blockSelection">
-            {{  name  }}
-        </button>
-    </section>
+  <section class="options-container">
+    <button
+      v-for="{ name, id } in options"
+      :key="id"
+      @click="$emit('selectedOption', id)"
+      :class="[
+        'option-button capitalize',
+        {
+          correct: blockSelection && id === correctAnswer,
+          incorrect: blockSelection && id === selectedAnswer
+            && id !== correctAnswer
+        }
+      ]"
+      :disabled="blockSelection"
+    >
+      {{ name }}
+    </button>
+  </section>
 </template>
 
 <script lang="ts" setup>
 import type { Pokemon } from '@/modules/pokemon/interfaces';
+
 interface Props {
-    options: Pokemon[];
-    blockSelection: boolean;
-    correctAnswer: number;
+  options: Pokemon[];
+  blockSelection: boolean;
+  correctAnswer: number;
+  selectedAnswer: number | null;
 }
 
 defineProps<Props>();
 
 defineEmits<{
-    selectedOption: [id: number];
+  selectedOption: [id: number];
 }>();
-
 </script>
 
 <style scoped>
-@reference "tailwindcss";
-
-button{
-    @apply bg-white shadow-md rounded-lg p-3 m-2 cursor-pointer w-40 text-center transition-all hover:bg-gray-100;
+.options-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 25px;
+  width: 100%;
 }
 
-.correect {
-    @apply bg-blue-500 text-white;
+.option-button {
+  width: 145px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background-color: white;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+  text-transform: capitalize;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.10);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.option-button:hover:not(:disabled) {
+  background-color: #e5e7eb;
+  transform: translateY(-3px);
+}
+
+.option-button:disabled {
+  cursor: default;
+}
+
+.correct {
+  background-color: #22c55e !important;
+  color: white !important;
+  box-shadow: 0 3px 10px rgba(34, 197, 94, 0.3);
 }
 
 .incorrect {
-    @apply bg-red-100 opacity-70;
+  background-color: #ef4444 !important;
+  color: white !important;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
 }
-
-
 </style>
